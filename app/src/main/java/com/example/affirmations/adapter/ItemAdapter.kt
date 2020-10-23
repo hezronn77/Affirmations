@@ -2,6 +2,8 @@ package com.example.affirmations.adapter
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.drawable.Icon
+import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.affirmations.R
 import com.example.affirmations.model.Affirmation
 import kotlinx.android.synthetic.main.list_item.view.*
+import java.util.*
 
 class ItemAdapter(private val context: Context, private val dataSet: List<Affirmation>): RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
@@ -28,6 +31,8 @@ class ItemAdapter(private val context: Context, private val dataSet: List<Affirm
         // fetch the cardView from list_item layout
 
         var card: CardView = view.findViewById(R.id.card)
+
+        lateinit var text2Speech: TextToSpeech
 
 
     }
@@ -55,6 +60,7 @@ class ItemAdapter(private val context: Context, private val dataSet: List<Affirm
             var imageAlert: ImageView = alert.findViewById(R.id.image_alert)
             var textAlert: TextView = alert.findViewById(R.id.text_alert)
             var goBack: Button = alert.findViewById(R.id.go_back_btn)
+            var speechBtn: Button = alert.findViewById(R.id.speakBtn)
 
             //bind the views
 
@@ -62,6 +68,17 @@ class ItemAdapter(private val context: Context, private val dataSet: List<Affirm
             textAlert.text = context.resources.getString(item.stringResourceId)
 
             alert.show()
+
+            // text to speech
+            speechBtn.setOnClickListener {
+                holder.text2Speech = TextToSpeech(context, TextToSpeech.OnInitListener { status ->
+                    if (status == TextToSpeech.SUCCESS){
+
+                        holder.text2Speech.language = Locale.US
+                        holder.text2Speech.speak(context.resources.getString(item.stringResourceId), TextToSpeech.QUEUE_FLUSH, null)
+                    }
+                })
+            }
 
             goBack.setOnClickListener {
                 alert.dismiss()
